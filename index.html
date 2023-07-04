@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Quick Quiz</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <div class="container" id="divstart">
+      <div id="home" class="flex-center flex-column">
+        <h1>Quick Quiz</h1>
+         <button class="btn"  id="start">Play</button>
+        <button class="btn" id="local">High Scores</button> 
+      </div>
+    </div>
+<!-- ------------------------------------------ question page........................................ -->
+<div class="container" id="divQuestion" style="display: none;">
+  <div id="game" class=" flex-column">
+    <div id="hud">
+      <div id="hud-item">
+        <p id="progressText" class="hud-prefix">
+          Question
+        </p>
+        <div id="progressBar">
+          <div id="progressBarFull"></div>
+        </div>
+      </div>
+      <div id="hud-item">
+        <p class="hud-prefix">
+         Score
+        </p>
+        <h1 class="hud-main-text" id="score">
+          0
+        </h1>
+      </div>
+    </div>
+    <h2 id="question">What is the answer to this questions?</h2>
+    <div class="choice-container">
+      <p class="choice-prefix">A</p>
+      <p class="choice-text" data-number="1">Choice 1</p>
+    </div>
+    <div class="choice-container">
+      <p class="choice-prefix">B</p>
+      <p class="choice-text" data-number="2">Choice 2</p>
+    </div>
+    <div class="choice-container">
+      <p class="choice-prefix">C</p>
+      <p class="choice-text" data-number="3">Choice 3</p>
+    </div>
+    <div class="choice-container">
+      <p class="choice-prefix">D</p>
+      <p class="choice-text" data-number="4">Choice 4</p>
+    </div>
+  </div>
+</div>
+<!-- ---------------------------------------------end page ------------------------------------------ -->
+    <div class="container" style="display: none;" id="divend">
+      <div id="end" class="flex-center flex-column">
+        <h1 id="finalScore"></h1>
+        <form>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            placeholder="username"
+          />
+          <button
+            type="submit"
+            class="btn"
+            id="saveScoreBtn"
+            onclick="saveHighScore(event)"
+            disabled
+          >
+            Save
+          </button>
+        </form>
+         <button class="btn" id="playAgain">Play Again</button>
+        <button class="btn" id="gohome">Go Home</button> 
+      </div>
+    </div>
+<!-- ----------------------------------------high score --------------------------------------- -->
+    <div class="container" style="display: none;" id="divscore">
+      <div id="highScores" class="flex-center flex-column">
+        <h1 id="finalScore">High Scores</h1>
+        <ul id="highScoresList"></ul>
+        <a class="btn" href="index.html">Go Home</a>
+      </div>
+    </div>
+    <script src="game.js"></script>
+  </body>
+</html>
+  </body>
+</html>
