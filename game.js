@@ -3,7 +3,7 @@ const choices = Array.from(document.getElementsByClassName("choice-text"));
 const progressText = document.getElementById("progressText");
 const questionCounterText = document.getElementById("questionCounter");
 const scoreText = document.getElementById("score");
-const progressBarFull = document.getElementById("progressBarFull");  //استدعيت البروقرس بار فل 
+const progressBarFull = document.getElementById("progressBarFull");  
 const start = document.getElementById('start');
 const divQuestion = document.getElementById('divQuestion');
 const divstart = document.getElementById('divstart');
@@ -15,9 +15,8 @@ const local = document.getElementById('local');
 const username = document.getElementById('username');
 const saveScoreBtn = document.getElementById('saveScoreBtn');
 const finalScore = document.getElementById('finalScore');
- const mostRecentScore = localStorage.getItem('mostRecentScore');
 let currentQuestion = {};
-let acceptingAnswers = false;  //هنا بقله ما تخليه يجاوب قبل ما احمل الاسئلة 
+let acceptingAnswers = false;  
 let score = 0;
 let questionCounter = 0;
 let availableQuesions = [];
@@ -106,6 +105,7 @@ let questions = [
   }
 ];
 
+
 //CONSTANTS
 const CORRECT_BONUS = 10;
 const MAX_QUESTIONS = 10;
@@ -128,112 +128,130 @@ playAgain.addEventListener('click',(event)=>{
   event.preventDefault();
   divstart.style.display ='none'
   divQuestion.style.display ='block';
+  finalScore.innerText = '';
   startGame();
 })
 
-gohome.addEventListener('click',()=>{
-  divstart.style.display ='block'
+gohome.addEventListener('click',(e)=>{
+  divstart.style.display ='block';
   divQuestion.style.display ='none';
   divend.style.display ='none';
 })
 
 getNewQuestion = () => {
-  if (availableQuesions.length === 0 || questionCounter >= MAX_QUESTIONS) {//بعد ما خلصو عدد الاسئلة اللي حطيتهم بدي ياه يروح لصفحة الايند
-    localStorage.setItem("mostRecentScore", score);
+  if (availableQuesions.length === 0 || questionCounter >= MAX_QUESTIONS) {
     divQuestion.style.display = 'none';
     divend.style.display ='block';
   }
-  questionCounter++;
-  progressText.innerText = `Question ${questionCounter}/${MAX_QUESTIONS}`;  // عداد الاسئلة عشان يكون داينمكلي سو حطيت الكاونتر وقسمته على الماكس من عدد الاسئلة
-  //Update the progress bar
-  progressBarFull.style.width = `${(questionCounter / MAX_QUESTIONS) * 100}%`; //هنا بقلك الويدث حدثه واضربه بمية عشان بدل ما يكون كسور 
+   questionCounter++;
+  progressText.innerText = `Question ${questionCounter}/${MAX_QUESTIONS}`; 
+progressBarFull.style.width = `${(questionCounter / MAX_QUESTIONS) * 100}%`; 
+   const questionIndex = Math.floor(Math.random() * availableQuesions.length);
+   currentQuestion = availableQuesions[questionIndex];
+   question.innerText = currentQuestion.question ;
 
-  const questionIndex = Math.floor(Math.random() * availableQuesions.length);
-  currentQuestion = availableQuesions[questionIndex];
-  question.innerText = currentQuestion.question ;
-
-   choices.forEach(choice => {            //عشان أصل للخيارات واعمل لفة عليهم واخد الاجابة الصح
+   choices.forEach(choice => {          
     const number = choice.dataset["number"];
     choice.innerText = currentQuestion["choice" + number];
   });
 
-  availableQuesions.splice(questionIndex, 1);  //عشان اتخلص من السؤال اللي انعرض مرة ما يرجع يتكرر
-  acceptingAnswers = true;                   //بسمح لليوزر يختار اجابة بعد كا احمل الاسئلة و الخيارات
+  availableQuesions.splice(questionIndex, 1); 
+  acceptingAnswers = true;                 
 };
 
 choices.forEach(choice => {
-  choice.addEventListener("click", e => {    //عملت فور ايش للخيارات عشان اكون قادرة اضغط على الخيارات وفي الكونسول بيبين اني اخترت الاجابة بس لسا ما حددت اذا صح او غلط
+  choice.addEventListener("click", (e) => {   
     if (!acceptingAnswers) return;
     acceptingAnswers = false;
     const selectedChoice = e.target;
-    const selectedAnswer = selectedChoice.dataset["number"];  //بعد ما جاوبت السؤال بدي اروح للي بعده 
+    const selectedAnswer = selectedChoice.dataset["number"];  
 
     const classToApply =
-      selectedAnswer == currentQuestion.answer ? "correct" : "incorrect"; //هاد اف بالتيرنيري اوبريتور ازا الاجابة صح اللي اخترتها بتساوي الاجابة اللي انا محددها للجواب حط كلاس كوريكت اللي هو الباك قراوند الو اخضر غير هيك احمر 
+      selectedAnswer == currentQuestion.answer ? "correct" : "incorrect"; 
 
-    if (classToApply === "correct") {   // هنا بستدعي الانكرمنت سكور بقله ازا الاجابة كانت كوريكت حطلي بالانكرمن بونص اللي هي +10
+    if (classToApply === "correct") {   
       incrementScore(CORRECT_BONUS);
     }
 
-    selectedChoice.parentElement.classList.add(classToApply);  //هنا لما اختار اجابة هيحط اخضر او احمر بس مش هتروح عشان اخليها تروح تحت ضفت نفس الجملة بس ريموف مش ادد
-
+    selectedChoice.parentElement.classList.add(classToApply);  
     setTimeout(() => {
-      selectedChoice.parentElement.classList.remove(classToApply); //خليه يشيل الباكقراوند بعد ما اختار بس لو حطيته بدون سيت تايم اوت هيبين كانو ما عملت اشي عشان هيك عملت زي ديلاي قبل ما يعمل ريموف وهو فنكشن
-      getNewQuestion();   // اعمل ريموف بهدها جيب السؤال اللي بعده بعد هاد الديلاي
-    }, 1000);  //زمن الديلاي اللي بدي ياه
+      selectedChoice.parentElement.classList.remove(classToApply);
+      getNewQuestion();   
+    }, 1000);  
   });
 });
 
-incrementScore = num => {    // هنا عشان يعمل عداد للسكور ويزود عليها بس لازم استدعيه
+incrementScore = num => {    
   score += num;
   scoreText.innerText = score;
 };
 startGame();
 //......................................... end js .......................................
-const MAX_HIGH_SCORES = 3;
-finalScore.innerText = mostRecentScore;
-
+const MAX_HIGH_SCORES = 5;
 username.addEventListener('keyup', () => {
-    saveScoreBtn.disabled = !username.value;   //اعمله ديسبل ازا كان ما دخل يوزر نيم
+    saveScoreBtn.disabled = !username.value;  
 });
-const highScoresList = document.getElementById("highScoresList");
- const highScores = JSON.parse(localStorage.getItem('highScores')) || [];   
+
 const saveHighScore = (e) => {
     e.preventDefault();
-   
-    const score = {
-        score: mostRecentScore,
-        name: username.value,
-    };
-    highScores.push(score);
-    highScores.sort((a, b) => b.score - a.score);
-    highScores.splice(5); 
+    finalScore.innerText = score;
+    addToLeaderboard(username.value,score);
 };
 saveScoreBtn.addEventListener('click', saveHighScore);
- localStorage.setItem('highScores', JSON.stringify(highScores));
+
+
+
+///////////addToLeaderboard////////////////////
+
+function addToLeaderboard(username, score) {
+  localStorage.setItem("Questions", JSON.stringify(questions));
+  let leaderboard = JSON.parse(localStorage.getItem('leaderboard'));
+
+  if (!leaderboard) {
+    leaderboard = [];
+  }
+  leaderboard.push({username, score});
+
+  localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+}
+
+
+
+
+const highScoresList = document.getElementById('highScoresList');
+
 
 // ..........................................high score .........................................
 local.addEventListener('click',(e)=>{
+  e.preventDefault();
+  let leaderboard = JSON.parse(localStorage.getItem('leaderboard'));
   divstart.style.display = 'none';
-  divscore.style.display = 'block';
- 
-highScoresList.innerHTML = highScores
-.map(score => { return`<li class="high-score">${score.name} - ${score.score}</li>`;
-  })  
-  .join("");
+   divscore.style.display = 'block';
+
+  leaderboard.forEach((entry)=>{
+    const li = document.createElement('li');
+    li.classList.add('high-score');
+    li.textContent = entry.username +' :'+ entry.score;
+    highScoresList.appendChild(li);
+  })
+
+  
+
 })
 
 
 
 
 
-
-
-
-
- 
-
   
 
-    
- 
+
+
+
+
+
+
+
+
+
+
